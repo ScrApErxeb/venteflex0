@@ -1,0 +1,15 @@
+# Environnements virtuels
+venv/
+__pycache__/
+
+# Fichiers de configuration
+*.env
+db.sqlite3
+
+# Fichiers système
+*.log
+*.pyc
+*.pyo
+.DS_Store
+.idea/
+.vscode/
