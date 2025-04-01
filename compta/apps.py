@@ -1,9 +1,8 @@
 from django.apps import AppConfig
 
-
-class VenteConfig(AppConfig):
+class ComptaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'vente'
+    name = 'compta'
 
     def ready(self):
-        import vente.signals  # Importer les signaux
+        import compta.signals  # Importer les signaux

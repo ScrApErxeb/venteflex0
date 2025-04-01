@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'personnel',
     'stock',
     'vente',
+    'compta',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

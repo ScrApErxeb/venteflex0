@@ -24,24 +24,19 @@ class LigneVente(models.Model):
     prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def clean(self):
-        # Vérifier si le prix de vente du produit est défini
-        if self.produit.prix_vente is None:
-            raise ValidationError(f"Le produit {self.produit.nom} n'a pas de prix de vente défini.")
-
-        # Vérifier si le prix de vente est inférieur au prix d'achat
-        if self.produit.prix_vente < self.produit.prix_achat:
-            raise ValidationError(
-                f"Le prix de vente ({self.produit.prix_vente}) du produit {self.produit.nom} est inférieur au prix d'achat ({self.produit.prix_achat})."
-            )
+        # Vérifier si le stock est suffisant
+        if self.produit.quantite_stock < self.quantite:
+            raise ValidationError(f"Stock insuffisant pour le produit {self.produit.nom}.")
 
     def save(self, *args, **kwargs):
-        # Définir automatiquement le prix unitaire à partir du prix de vente du produit
-        if self.prix_unitaire is None:
-            self.prix_unitaire = self.produit.prix_vente
+        self.clean()  # Appeler la validation avant de sauvegarder
+        if not self.prix_unitaire:
+            self.prix_unitaire = self.produit.prix_vente  # Définir le prix unitaire par défaut
+        # Soustraire la quantité du stock
+        if self.pk is None:  # Si la ligne de vente est nouvelle
+            self.produit.quantite_stock -= self.quantite
+            self.produit.save()
         super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.produit.nom} (x{self.quantite})"
 
     @property
     def total(self):
@@ -49,3 +44,6 @@ class LigneVente(models.Model):
         if self.quantite is None or self.prix_unitaire is None:
             return 0
         return self.quantite * self.prix_unitaire
+
+    def __str__(self):
+        return f"{self.produit.nom} (x{self.quantite})"
